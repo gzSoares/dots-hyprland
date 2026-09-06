@@ -28,8 +28,8 @@ hl.monitor({
 -- BEGIN gestures — rewritten by Settings → Mouse; change them there
 hl.gesture({
     fingers = 3,
-    direction = "swipe",
-    action = "move"
+    direction = "horizontal",
+    action = "workspace"
 })
 hl.gesture({
     fingers = 3,
@@ -37,12 +37,7 @@ hl.gesture({
     action = "float"
 })
 hl.gesture({
-    fingers = 4,
-    direction = "horizontal",
-    action = "workspace"
-})
-hl.gesture({
-    fingers = 4,
+    fingers = 3,
     direction = "up",
     action = function()
         hl.dispatch(hl.dsp.global("quickshell:overviewWorkspacesToggle"))
@@ -50,10 +45,40 @@ hl.gesture({
 })
 hl.gesture({
     fingers = 4,
+    direction = "horizontal",
+    action = (function()
+        local accum = 0
+        return {
+            start = function(e) accum = 0 end,
+            update = function(e)
+                accum = accum + e.delta.x
+                local threshold = 80 -- px por "passo" de coluna
+
+                -- gesto para a ESQUERDA (delta negativo) -> foca a janela da DIREITA
+                while accum < -threshold do
+                    hl.dispatch(hl.dsp.layout("move +col"))
+                    accum = accum + threshold
+                end
+
+                -- gesto para a DIREITA (delta positivo) -> foca a janela da ESQUERDA
+                while accum > threshold do
+                    hl.dispatch(hl.dsp.layout("move -col"))
+                    accum = accum - threshold
+                end
+            end,
+            finish = function(e) accum = 0 end,
+        }
+    end)()
+})
+hl.gesture({
+    fingers = 4,
+    direction = "up",
+    action = "fullscreen"
+})
+hl.gesture({
+    fingers = 4,
     direction = "down",
-    action = function()
-        hl.dispatch(hl.dsp.global("quickshell:overviewWorkspacesClose"))
-    end
+    action = "close"
 })
 -- END gestures
 
@@ -96,18 +121,18 @@ hl.config({
         -- 2 = circle, higher = squircle, 4 = very obvious squircle
         -- We use a slightly higher power here to make the rounding feel more continuous
         rounding_power = 4,
-        rounding = 10,
+        rounding = 18,
 
         blur = {
             enabled = true,
             xray = true,
             special = false,
             new_optimizations = true,
-            size = 10,
-            passes = 3,
-            noise = 0.05,
+            size = 6,
+            passes = 2,
+            noise = 0.03,
             contrast = 0.89,
-            vibrancy = 0.5,
+            vibrancy = 0.7,
             vibrancy_darkness = 0.5,
             popups = true,
             popups_ignorealpha = 0.6,
@@ -223,6 +248,7 @@ hl.config({
     },
 
     cursor = {
+        default_monitor = "DP-1",
         zoom_factor = 1,
         zoom_rigid = false,
         zoom_disable_aa = true,
