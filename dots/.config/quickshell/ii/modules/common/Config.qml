@@ -956,6 +956,7 @@ Singleton {
                 property string horizontal4: "workspace" // "workspace" | "special" | "none"
                 property string up4: "overviewOpen" // "overviewOpen" | "fullscreen" | "special" | "none"
                 property string down4: "overviewClose" // "overviewClose" | "close" | "none"
+                property string up3: "overviewOpen" // "overviewOpen" | "fullscreen" | "special" | "none"
             }
 
             property JsonObject language: JsonObject {
