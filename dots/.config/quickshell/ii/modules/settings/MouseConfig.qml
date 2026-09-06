@@ -57,7 +57,12 @@ ContentPage {
             },
             horizontal4: {
                 workspace: '{\n    fingers = 4,\n    direction = "horizontal",\n    action = "workspace"\n}',
-                special:   '{\n    fingers = 4,\n    direction = "horizontal",\n    action = "special"\n}'
+                special:   '{\n    fingers = 4,\n    direction = "horizontal",\n    action = "special"\n}',
+                moveColumn: '{\n    fingers = 4,\n    direction = "horizontal",\n    action = (function()\n        local accum = 0\n        return {\n            start = function(e) accum = 0 end,\n            update = function(e)\n                accum = accum + e.delta.x\n                local threshold = 80 -- px por "passo" de coluna\n\n                -- gesto para a ESQUERDA (delta negativo) -> foca a janela da DIREITA\n                while accum < -threshold do\n                    hl.dispatch(hl.dsp.layout("move +col"))\n                    accum = accum + threshold\n                end\n\n                -- gesto para a DIREITA (delta positivo) -> foca a janela da ESQUERDA\n                while accum > threshold do\n                    hl.dispatch(hl.dsp.layout("move -col"))\n                    accum = accum - threshold\n                end\n            end,\n            finish = function(e) accum = 0 end,\n        }\n    end)()\n}'
+            },
+            up3: {
+                overviewOpen: '{\n    fingers = 3,\n    direction = "up",\n    action = function()\n        hl.dispatch(hl.dsp.global("quickshell:overviewWorkspacesToggle"))\n    end\n}',
+                scrollOverview: '{\n    fingers = 3,\n    direction = "up",\n    action = function()\n        if hl.plugin and hl.plugin.scrolloverview and hl.plugin.scrolloverview.overview then\n            hl.plugin.scrolloverview.overview("toggle")\n        end\n    end\n}'
             },
             up4: {
                 overviewOpen: '{\n    fingers = 4,\n    direction = "up",\n    action = function()\n        hl.dispatch(hl.dsp.global("quickshell:overviewWorkspacesToggle"))\n    end\n}',
@@ -70,7 +75,7 @@ ContentPage {
             }
         }
         const lines = []
-        for (const slot of ["swipe3", "pinch3", "horizontal4", "up4", "down4"]) {
+        for (const slot of ["swipe3", "pinch3", "up3", "horizontal4", "up4", "down4"]) {
             // Unknown values (hand-edited config.json) fall back to the slot's
             // default — the first key — so the file always matches what the
             // combo's index-0 fallback displays. The own-property guard keeps
@@ -915,13 +920,24 @@ ContentPage {
                 ]
             }
             GestureRow {
+                icon: "swipe_up"
+                label: Translation.tr("Three-finger swipe up")
+                slot: "up3"
+                options: [
+                    { displayName: Translation.tr("Open overview"),        value: "overviewOpen" },
+                    { displayName: Translation.tr("Scrolling overview"),   value: "scrollOverview" },
+                    { displayName: Translation.tr("Do Nothing"),           value: "none" }
+                ]
+            }
+            GestureRow {
                 icon: "swipe_right"
                 label: Translation.tr("Four-finger swipe sideways")
                 slot: "horizontal4"
                 options: [
-                    { displayName: Translation.tr("Switch workspaces"), value: "workspace" },
-                    { displayName: Translation.tr("Special workspace"), value: "special" },
-                    { displayName: Translation.tr("Do Nothing"),        value: "none" }
+                    { displayName: Translation.tr("Switch workspaces"),  value: "workspace" },
+                    { displayName: Translation.tr("Special workspace"),  value: "special" },
+                    { displayName: Translation.tr("Move column focus"),  value: "moveColumn" },
+                    { displayName: Translation.tr("Do Nothing"),         value: "none" }
                 ]
             }
             GestureRow {
