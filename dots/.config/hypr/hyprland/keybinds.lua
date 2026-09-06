@@ -36,10 +36,11 @@ hl.bind("SUPER_R", hl.dsp.global("quickshell:workspaceNumber"), {ignore_mods = t
 -- OSK on f11, overlay on f12, bar on H. Frees J/K/M/Slash/Space for layout dispatchers below.
 hl.bind("SUPER + f10", hl.dsp.global("quickshell:overviewWorkspacesToggle"), {description = "Toggle overview"} )
 hl.bind("SUPER + V", hl.dsp.global("quickshell:overviewClipboardToggle"), {description = "Clipboard history >> clipboard"} )
+hl.bind("SUPER + ALT + V", hl.dsp.exec_cmd(hyprScripts .. "/wipe_cliphist.sh") )
 hl.bind("SUPER + Period", hl.dsp.global("quickshell:overviewEmojiToggle"), {description = "Emoji >> clipboard"} )
 hl.bind("SUPER + A", hl.dsp.global("quickshell:sidebarLeftToggle"), {description = "Toggle left sidebar"} )
 hl.bind("SUPER + ALT + A", hl.dsp.global("quickshell:sidebarLeftToggleDetach") )
-hl.bind("SUPER + N", hl.dsp.global("quickshell:sidebarRightToggle"), {description = "Toggle right sidebar"} )
+hl.bind("SUPER + A", hl.dsp.global("quickshell:sidebarRightToggle"), {description = "Toggle right sidebar"} )
 hl.bind("SUPER + Tab", hl.dsp.global("quickshell:cheatsheetToggle"), {description = "Toggle cheatsheet"} )
 hl.bind("SUPER + f11", hl.dsp.global("quickshell:oskToggle"), {description = "Toggle on-screen keyboard"} )
 hl.bind("SUPER + M", hl.dsp.global("quickshell:mediaControlsToggle"), {description = "Toggle media controls"} )
@@ -61,9 +62,7 @@ hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SOURCE@ tog
 hl.bind("SUPER + ALT + M", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SOURCE@ toggle"), {locked = true, description = "Toggle mic"} )
 
 -- Fork overhaul: wallpaper selector moved from Ctrl+Super+T → Super+W
-hl.bind("SUPER + W", hl.dsp.global("quickshell:wallpaperSelectorToggle"), {description = "Toggle wallpaper selector"} )
 hl.bind("SUPER + ALT + W", hl.dsp.global("quickshell:wallpaperSelectorRandom"), {description = "Select random wallpaper"} )
-hl.bind("SUPER + W", hl.dsp.exec_cmd(qsIsAlive.." || "..qsScripts.."/colors/switchwall.sh") )
 hl.bind("CTRL + SUPER + T", hl.dsp.exec_cmd(qsScripts.."/colors/switchwall.sh"), {description = "Pick wallpaper image"} )
 -- Light/dark toggle — added by upstream merge (CTRL+SUPER+SHIFT+D powertoys-style).
 -- Wired to a GlobalShortcut in MaterialThemeLoader.qml; same name keeps that intact.
@@ -212,13 +211,16 @@ for i = 1, 4 do
  local prefix = {"r+","r-","r+","r-"}
  hl.bind(keycombos[i], hl.dsp.focus({workspace = prefix[i].."1"}) )
 end
---#/# bind = SUPER + Scroll ↑/↓,, -- Focus left/right
-for i = 1, 4 do
+--#/# bind = SUPER + Scroll ↑/↓,, -- Focus workspace left/right
+for i = 1, 2 do
  local key = {"SUPER + mouse_down", "SUPER + mouse_up"}
- local keycombos = {key[1], key[2], "CTRL + "..key[1], "CTRL + "..key[2]}
- local prefix = {"+","-","r+","r-"}
- hl.bind(keycombos[i], hl.dsp.focus({workspace = prefix[i].."1"}) )
+ local prefix = {"+","-"}
+ hl.bind(key[i], hl.dsp.focus({workspace = prefix[i].."1"}) )
 end
+
+--#/# bind = CTRL + SUPER + Scroll ↑/↓,, -- Focus window left/right
+hl.bind("CTRL + SUPER + mouse_down", hl.dsp.focus({direction = "r"}), {description = "Focus window to the right"} )
+hl.bind("CTRL + SUPER + mouse_up", hl.dsp.focus({direction = "l"}), {description = "Focus window to the left"} )
 --## Special
 hl.bind("SUPER + S", hl.dsp.workspace.toggle_special("special"), {description = "Toggle scratchpad"} )
 hl.bind("SUPER + mouse:275", hl.dsp.workspace.toggle_special("special") )
@@ -277,7 +279,7 @@ hl.bind("SUPER + code:86", function() zoomfunction(0.3) end, {repeating = true} 
 hl.bind("SUPER + T", hl.dsp.exec_cmd(terminal), {description = "Terminal"} )
 hl.bind("CTRL + ALT + T", hl.dsp.exec_cmd(terminal) )
 hl.bind("SUPER + E", hl.dsp.exec_cmd(fileManager), {description = "File manager"} )
-hl.bind("SUPER + B", hl.dsp.exec_cmd(browser), {description = "Browser"} )
+hl.bind("SUPER + W", hl.dsp.exec_cmd(browser), {description = "Browser"} )
 hl.bind("SUPER + C", hl.dsp.exec_cmd(codeEditor), {description = "Code editor"} )
 hl.bind("CTRL + SUPER + SHIFT + ALT + W", hl.dsp.exec_cmd(officeSoftware), {description = "Office software"} )
 hl.bind("SUPER + X", hl.dsp.exec_cmd(textEditor), {description = "Text editor"} )
