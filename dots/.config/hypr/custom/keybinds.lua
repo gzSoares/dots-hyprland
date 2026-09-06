@@ -14,3 +14,21 @@
 -- hl.bind("CTRL + SUPER + V", hl.dsp.exec_cmd(volumeMixer), {description = "Volume mixer"})
 -- hl.bind("SUPER + I", hl.dsp.exec_cmd(settingsApp), {description = "Settings app"})
 -- hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd(taskManager), {description = "Task manager"})
+
+-- qs_keybind_capture — capture submap used by the settings keybinds editor; do not remove
+hl.define_submap("qs_keybind_capture", function()
+    hl.bind("Escape", hl.dsp.submap("reset"))
+end)
+hl.bind("SUPER + CTRL + W", hl.dsp.global("quickshell:wallpaperSelectorToggle"))
+hl.bind("SUPER + ALT + V", hl.dsp.exec_cmd("/home/geazi/.config/hypr/hyprland/scripts/wipe_cliphist.sh"))
+hl.unbind("SUPER + B")
+--#/# bind = SUPER + Scroll ↑/↓,, -- Focus workspace left/right
+for i = 1, 2 do
+ local key = {"SUPER + mouse_down", "SUPER + mouse_up"}
+ local prefix = {"+","-"}
+ hl.bind(key[i], hl.dsp.focus({workspace = prefix[i].."1"}) )
+end
+
+--#/# bind = CTRL + SUPER + Scroll ↑/↓,, -- Focus window left/right
+hl.bind("CTRL + SUPER + mouse_down", hl.dsp.focus({direction = "r"}), {description = "Focus window to the right"} )
+hl.bind("CTRL + SUPER + mouse_up", hl.dsp.focus({direction = "l"}), {description = "Focus window to the left"} )
