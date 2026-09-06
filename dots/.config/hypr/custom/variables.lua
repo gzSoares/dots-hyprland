@@ -11,5 +11,5 @@
 -- dontLoadDefaultKeybinds = true
 
 -- Override an app launcher chain — e.g. force Alacritty as terminal:
--- terminal = "alacritty"
--- browser  = "firefox"
+-- terminal = "kitty"
+-- browser  = "brave"
